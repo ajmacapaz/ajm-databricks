@@ -38,8 +38,8 @@
 
 # COMMAND ----------
 
-#pipeline_language = "SQL"
-pipeline_language = "Python"
+pipeline_language = "SQL"
+#pipeline_language = "Python"
 
 DA.print_pipeline_config(pipeline_language)
 
