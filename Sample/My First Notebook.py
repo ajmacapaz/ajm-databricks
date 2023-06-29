@@ -1,20 +1,68 @@
 # Databricks notebook source
-print('Hello, World!');
-print("Welcome to Databricks Lakehouse!");
+# MAGIC %md
+# MAGIC
+# MAGIC # Magic Commands for Python and SQL
+# MAGIC
+# MAGIC ### Available language below are
+# MAGIC * **Python on cell 2**
+# MAGIC * *SQL on cell 3*
+# MAGIC
+
+# COMMAND ----------
+
+# MAGIC %python
+# MAGIC print('Hello, World!');
+# MAGIC print("Welcome to Databricks Lakehouse!");
+# MAGIC print("I'm running Python!")
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECT "I'm running SQL!"
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC # Variable Assignment
+
+# COMMAND ----------
+
+first_name = "John"
+last_name = "Doe"
+age = 10 + 20
+
+print(f"Full Name: {first_name} {last_name}")
+print(f"Age: {age}")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC
+# MAGIC ### Running or Calling Another Notebook
+
+# COMMAND ----------
+
+# MAGIC %run "../Sample/My Second Notebook"
+
+# COMMAND ----------
+
+print(f"Country: {country}")
+print(f"State: {state}")
+print(f"City: {city}")
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC
-# MAGIC Select "This was run using SQL.", "This is a second cell."
+# MAGIC SELECT '${country}' AS Country,
+# MAGIC         '${state}' AS State,
+# MAGIC         '${city}' AS City
 
 # COMMAND ----------
 
-print("This is a third cell.")
-
-# COMMAND ----------
-
-# MAGIC %md Extracting CSV data.
+# MAGIC %md 
+# MAGIC
+# MAGIC # Extracting CSV data.
 
 # COMMAND ----------
 
@@ -98,3 +146,10 @@ nutrition_df.display()
 # MAGIC
 # MAGIC --DESCRIBE HISTORY
 # MAGIC --select * from table_changes('[table_name]', 1[version number])
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC
+# MAGIC SELECT * FROM b_arsenio_j_macapaz.titles_bronze 
+# MAGIC --WHERE type = 'Movie'
