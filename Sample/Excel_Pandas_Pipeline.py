@@ -71,6 +71,7 @@ def credits_bronze():
 def title_subscribers_silver():
     return (dlt.read_stream("titles_bronze")
             .join(dlt.read("subscribers_bronze"), ["production_countries"]))
+            #.where(F.col("genres") != "[]"))
     
 @dlt.table(
     name = "title_credits_silver",
@@ -95,21 +96,23 @@ def title_credits_silver():
     comment = "Group by Type",
     table_properties={"quality": "gold"}
 )
-
 def genre_gold():
     df = dlt.read("title_subscribers_silver")
-    return (df.groupBy(F.col("type"))
-            .agg(F.count("type").alias("total_type"),
-                 F.count("genres").alias("total_genres")))
-    #return (df.groupBy(F.col("genres"), F.col("type")).agg(F.count("genres").alias("total_genres"), F.count("type").alias("total_type")))
-    
+    return (df.groupBy(F.col("genres"), F.col("type"))
+            .agg(F.count("*").alias("count"))
+            .orderBy(F.count("genres").desc(), F.col("type"))
+            )
 
-    # return (dlt.read("title_subscribers_silver")
-    #         .groupBy("genres")
-    #         .agg(F.count("*").alias("total_genres"))
-    #         .select("LIVE.title_subscribers_silver.title", 
-    #                 "title_subscribers_silver.type", 
-    #                 "title_subscribers_silver.runtime")
-    #         )
+@dlt.table(
+    name = "subscribersByCountry_gold",
+    comment = "Group by Country",
+    table_properties={"quality": "gold"}
+)
+def subscribersByCountry_gold():
+    df = dlt.read("title_subscribers_silver")
+    return (df.groupBy(F.col("production_countries"))
+            .agg(F.count("Subscribers").alias("total_subscribers"))
+            .orderBy(F.count("Subscribers").desc())
+            )
 
 

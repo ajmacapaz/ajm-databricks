@@ -91,7 +91,8 @@ display(ds)
 
 # COMMAND ----------
 
-content = dbutils.fs.ls("dbfs:/FileStore/team6")
+#content = dbutils.fs.ls("dbfs:/FileStore/team6")
+content = dbutils.fs.ls("dbfs:/FileStore/team6/temp")
 display(content)
 
 # %fs ls dbfs:/FileStore/team6
@@ -117,8 +118,23 @@ menu_data.write.format("delta").saveAsTable("menu_nutrition_data")
 # MAGIC --SELECT * FROM menu_nutrition_data
 # MAGIC --DESCRIBE TABLE menu_nutrition_data
 # MAGIC --DESCRIBE EXTENDED menu_nutrition_data
-# MAGIC DESCRIBE DETAIL menu_nutrition_data
+# MAGIC --DESCRIBE HISTORY menu_nutrition_data
+# MAGIC SELECT * FROM table_changes ('menu_nutrition_data', 0)
+# MAGIC --DESCRIBE DETAIL menu_nutrition_data
 # MAGIC
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC
+# MAGIC --DESCRIBE HISTORY menu_nutrition_data
+# MAGIC --DESCRIBE EXTENDED menu_nutrition_data
+# MAGIC --DESCRIBE DETAIL menu_nutrition_data
+# MAGIC --DESCRIBE HISTORY menu_nutrition_data
+# MAGIC
+# MAGIC --DESCRIBE HISTORY b_arsenio_j_macapaz.credits_bronze
+# MAGIC
+# MAGIC SELECT * FROM table_changes ("b_arsenio_j_macapaz.credits_bronze", 1)
 
 # COMMAND ----------
 
@@ -153,3 +169,41 @@ nutrition_df.display()
 # MAGIC
 # MAGIC SELECT * FROM b_arsenio_j_macapaz.titles_bronze 
 # MAGIC --WHERE type = 'Movie'
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC
+# MAGIC SELECT genres, type, count(*) 
+# MAGIC FROM b_arsenio_j_macapaz.titles_bronze
+# MAGIC GROUP BY genres, type
+# MAGIC HAVING genres = 'comedy'-- and [Type] = 'MOVIE'
+# MAGIC ORDER BY genres
+
+# COMMAND ----------
+
+# %sql
+
+# SELECT genres, type, count(*) 
+# FROM b_arsenio_j_macapaz.title_subscribers_silver
+# GROUP BY genres, type
+# HAVING genres = 'comedy'-- and [Type] = 'MOVIE'
+# ORDER BY genres
+import pyspark.sql.functions as F
+
+# df = spark.table("b_arsenio_j_macapaz.title_subscribers_silver")
+# df = df.groupBy(F.col("genres"), F.col("type")).agg(F.count("*").alias("count"))\
+#     .orderBy(F.count("genres").desc(), F.col("type"))
+
+# df = spark.table("b_arsenio_j_macapaz.title_subscribers_silver")
+# df = df.groupBy(F.col("production_countries"))\
+#         .agg(F.count("Subscribers").alias("total_subscribers"))\
+#         .orderBy(F.count("Subscribers").desc())
+
+df = spark.table("b_arsenio_j_macapaz.title_subscribers_silver")
+df = df.groupBy(F.col("type"), F.col("release_year"))\
+        .agg(F.count("release_year").alias("count"))\
+        .filter(F.col("release_year") > 1999)\
+        .orderBy(F.col("release_year"))
+
+display(df)
